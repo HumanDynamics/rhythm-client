@@ -42,15 +42,42 @@ var RhythmClient = function (options) {
     })
   }
 
-  // self.addParticipant = function (participant) {
-  // }
+  // addParticipant
+  // @participant : participant object, with at least a key for 'id' and 'consent'
+  self.addParticipant = function (participant) {
+    var newParticipantList = _.concat(self.participants, participant)
+    return self._socket.emit('meetingJoined', {
+      participant: participant.uuid,
+      name: (participant.name || ''),
+      participants: _.map(newParticipantList, function (p) { return p.uuid }),
+      meeting: self.meeting.id,
+      meetingUrl: (self.meeting.url || ''),
+      consent: participant.consent,
+      consentDate: (participant.consentDate || new Date().toISOString())
+    }).then(function (result) {
+      self.participants = newParticipantList
+      return Promise.accept(newParticipantList)
+    })
+  }
 
   // startMeeting
   // @meeting : an object, must have at least key 'id' with a string identifier
   // @participants : an list of participants that are in the meeting
+  //   participant objects must have at least an 'id' and 'consent' keys; see below.
   // @meta : any metadata to associate with the meetingId
   // returns a promise that returns true if you did everything right, and throws
   // an error otherwise
+  // Optional data:
+  // @meeting:
+  //   {url: (optional) URL of this meeting
+  //    id: string ID of this meeting
+  //   }
+  // @participant:
+  //   {consentDate: (optional) date user gave consent, in ISOString format.
+  //    consent: boolean of whether user has given consent or not
+  //    id: string ID of participant
+  //    name: (optional) name of participant, as a String
+  //   }
   self.startMeeting = function (meeting, participants, meta) {
     // check if we have all the right data
     var meetingCheck = (_.has(meeting, 'id'))
@@ -78,6 +105,7 @@ var RhythmClient = function (options) {
     return Promise.all(_.map(participants, sendJoinEvent)).then(function (results) {
       if (_.every(results)) {
         self.meeting = meeting
+        self.participants = participants
         return Promise.accept(true)
       } else {
         return Promise.reject(new Error('Could not start a meeting. Check that you sent all the required data'))
