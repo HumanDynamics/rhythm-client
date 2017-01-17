@@ -1,7 +1,7 @@
 {
-  "name": "rhythm-badge",
-  "version": "1.0.0",
-  "description": "",
+  "name": "rhythm-client",
+  "version": "0.1.0",
+  "description": "Library to connect to a rhythm server",
   "main": "src/index.js",
   "scripts": {
     "test": "npm run mocha",

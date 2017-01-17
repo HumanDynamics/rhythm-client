@@ -7,7 +7,7 @@ Javascript library to interface with a Rhythm Server
 ## usage
 1. Connect to a rhythm server
 ```javascript
-const rc = require('rhythm-client')
+const RhythmClient = require('rhythm-client')
 var rc = new RhythmClient({
   serverUrl: 'server-url',
   serverEmail: 'server-email',
