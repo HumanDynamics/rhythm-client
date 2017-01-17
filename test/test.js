@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 'use strict'
 
+const _ = require('lodash')
 const assert = require('assert')
 const RhythmClient = require('..')
 
@@ -69,6 +70,47 @@ describe('connects to server properly', function () {
     rc2.connect().catch(function (err) {
       assert(err.code === 401)
       done()
+    })
+  })
+})
+
+describe('can start a meeting', function () {
+  it('starts a meeting when it gives all the right information', function (done) {
+    var rc = new RhythmClient({
+      serverUrl: process.env.TEST_SERVER_URL,
+      serverPassword: process.env.TEST_SERVER_PASSWORD,
+      serverEmail: process.env.TEST_SERVER_EMAIL
+    })
+    rc.connect().then(function () {
+      assert(rc.connected === true)
+      var meeting = {id: 'meeting-id'}
+      var participants = [{uuid: 'p1uuid', consent: true}, {uuid: 'p2uuid', consent: true}]
+      rc.startMeeting(meeting, participants, {}).then(function (result) {
+        assert(result)
+        done()
+      }).catch(function (err) {
+        done(err)
+      })
+    })
+  })
+})
+
+describe('doesnt start a meeting', function () {
+  it('doesnt start a meeting when you send bad info', function (done) {
+    var rc2 = new RhythmClient({
+      serverUrl: process.env.TEST_SERVER_URL,
+      serverPassword: process.env.TEST_SERVER_PASSWORD,
+      serverEmail: process.env.TEST_SERVER_EMAIL
+    })
+    rc2.connect().then(function () {
+      assert(rc2.connected === true)
+      var meeting = {}
+      var participants = [{uuid: 'p1uuid', consent: true}, {uuid: 'p2uuid', consent: true}]
+      rc2.startMeeting(meeting, participants, {})
+        .catch(function (err) {
+          //console.log('err', err)
+          done()
+        })
     })
   })
 })
