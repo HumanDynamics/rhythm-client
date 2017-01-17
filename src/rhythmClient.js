@@ -9,7 +9,7 @@ var RhythmClient = function (options) {
   var checkAndSet = function (varName) {
     self[varName] = (options[varName] || '')
     if (self[varName] === '') {
-      throw new Error('No ' + varName + ' defined. Make sure you pass a `' + varName + 'on construction.')
+      throw new Error('No ' + varName + ' defined. Make sure you pass a `' + varName + '` on construction.')
     }
   }
 
@@ -17,6 +17,9 @@ var RhythmClient = function (options) {
   // @returns a promise with a token or an error if it could not connect or
   // authenticate
   self.connect = function () {
+    if (self.serverUrl === '' || typeof (self.serverUrl) === 'undefined') {
+      throw new Error('Cannot connect, set the server first.')
+    }
     self._socket = io(self.serverUrl, {
       'transports': [
         'websocket',
