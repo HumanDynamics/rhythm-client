@@ -46,7 +46,7 @@ var RhythmClient = function (options) {
   // }
 
   // startMeeting
-  // @meetingId : an identifier for this meeting
+  // @meeting : an object, must have at least key 'id' with a string identifier
   // @participants : an list of participants that are in the meeting
   // @meta : any metadata to associate with the meetingId
   // returns a promise that returns true if you did everything right, and throws
@@ -83,6 +83,21 @@ var RhythmClient = function (options) {
         return Promise.reject(new Error('Could not start a meeting. Check that you sent all the required data'))
       }
     })
+  }
+
+  // sends a speaking event for a given participant
+  // @startTime, @endTime -- self explanatory. In ISOString format.
+  // returns a promise that returns the created speaking event object on
+  // success, and throws an error on reject
+  self.sendSpeakingEvent = function (participantId, startTime, endTime) {
+    return self.app.service('utterances').create(
+      {
+        participant: participantId,
+        meeting: self.meeting.id,
+        startTime: startTime,
+        endTime: endTime
+      }
+    )
   }
 
   // self.addParticipant = function (participant)
