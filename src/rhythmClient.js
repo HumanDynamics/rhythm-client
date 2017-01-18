@@ -97,7 +97,7 @@ var RhythmClient = function (options) {
       return self._socket.emit('meetingJoined', {
         participant: participant.uuid,
         name: (participant.name || ''),
-        participants: _.map(participants, function (p) { return p.uuid }),
+        participants: _.map(participants, function (p) { return { participant: p.uuid, meeting: meeting.id } }),
         meeting: meeting.id,
         meetingUrl: (meeting.url || ''),
         consent: participant.consent,
