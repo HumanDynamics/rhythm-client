@@ -59,7 +59,7 @@ var RhythmClient = function (options) {
       consentDate: (participant.consentDate || new Date().toISOString())
     }).then(function (result) {
       self.participants = newParticipantList
-      return Promise.accept(newParticipantList)
+      return Promise.resolve(newParticipantList)
     })
   }
 
@@ -109,7 +109,7 @@ var RhythmClient = function (options) {
       if (_.every(results)) {
         self.meeting = meeting
         self.participants = participants
-        return Promise.accept(true)
+        return Promise.resolve(true)
       } else {
         return Promise.reject(new Error('Could not start a meeting. Check that you sent all the required data'))
       }
